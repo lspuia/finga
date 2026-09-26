@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Space Between Worlds
 
-## Getting Started
+Construction and structural engineering calculators, built with Next.js 16, React 19, Tailwind CSS 4 and Three.js.
 
-First, run the development server:
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build (all calculator pages are prerendered)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What's inside
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Category | Calculators |
+| --- | --- |
+| Structural | Beam Analysis, Column Buckling, Section Properties, Load Takedown, Spread Footing, Retaining Wall, Timber Joist |
+| Concrete & Masonry | Concrete Volume, Rebar, Brick & Block, Plaster & Render |
+| Finishes | Paint, Tile & Flooring, Drywall, Roofing, Stair Design |
+| Site & Civil | Excavation & Earthwork, Asphalt & Paving, Slope & Grade |
+| Planning & Tools | Unit Converter, Cost Estimate |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Every calculator recalculates live, flips between metric and imperial (inputs and outputs), shows warnings when a result fails a common code or comfort limit, and can be copied, printed, shared as a link or saved.
 
-## Learn More
+## How a calculator is defined
 
-To learn more about Next.js, take a look at the following resources:
+Each calculator is a plain object in `src/lib/calc/defs/`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```ts
+export const paint: CalculatorDef = {
+  slug: "paint",
+  name: "Paint",
+  category: "Finishes",
+  inputs: [{ key: "L", label: "Room length", dim: "length", default: 5 }, ...],
+  compute: (v) => ({ outputs: [{ key: "litres", label: "Topcoat paint", value: 12.7, dim: "liquid", primary: true }] }),
+  formulas: ["Litres = area × coats / coverage"],
+};
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- All values are stored and computed in SI. The `dim` field tells the shell how to convert for display (`src/lib/calc/units.ts`).
+- `showIf` hides an input unless a select has a given value.
+- `primary: true` outputs become the large result cards; the rest are grouped by `group`.
+- Add the definition to `CALCULATORS` in `src/lib/calc/defs/index.ts` and the page, card, footer link and static route appear automatically.
+- Optional `diagram` keys map to SVG or Three.js previews in `src/components/diagrams/`.
 
-## Deploy on Vercel
+## Plugging in a database
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Saved results and the unit preference currently live in `localStorage` through a tiny store in `src/lib/storage.ts`. Replace the read/write functions there with API calls (or server actions) and the Saved page and Save button keep working unchanged.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Structure
+
+```
+src/app                 routes: /, /calculators, /calculators/[slug], /saved
+src/components          shell, nav, cards, diagrams, three.js scenes
+src/lib/calc/defs       one file per calculator
+src/lib/calc/units.ts   metric ↔ imperial conversion table
+```

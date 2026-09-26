@@ -1,69 +1,86 @@
-import Image from "next/image";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import { CALCULATORS, CATEGORIES, byCategory } from "@/lib/calc/defs";
+import { CalcCard } from "@/components/CalcCard";
+
+const Hero = dynamic(() => import("@/components/HeroClient"), { ssr: true });
+
+const featured = ["beam", "concrete", "rebar", "footing", "roofing", "earthwork"];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <>
+      {/* HERO */}
+      <section className="relative h-[calc(100svh-48px)] min-h-[560px] overflow-hidden">
+        <div className="absolute inset-0"><Hero /></div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[58%] bg-gradient-to-b from-bg via-bg/85 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg to-transparent" />
+        <div className="pointer-events-none relative mx-auto flex h-full max-w-[1024px] flex-col items-center justify-start px-5 pt-[8vh] text-center">
+          <p className="rise text-[14px] font-medium text-fg-2">Space Between Worlds</p>
+          <h1 className="display rise rise-1 mt-3 max-w-[820px] text-[48px] sm:text-[72px] lg:text-[84px]">
+            Every number a builder needs.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="rise rise-2 mt-5 max-w-[560px] text-[19px] leading-snug text-fg-2 sm:text-[23px]">
+            {CALCULATORS.length} engineering calculators. Metric or imperial. Instant, exact, and beautiful.
           </p>
+          <div className="rise rise-3 pointer-events-auto mt-7 flex items-center gap-3">
+            <Link href="/calculators" className="btn btn-primary">Open the calculators</Link>
+            <Link href="/calculators/beam" className="btn btn-ghost link-arrow">Try the beam analyser</Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* PILLARS */}
+      <section className="mx-auto max-w-[1024px] px-5 pt-8">
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { t: "Live results", d: "Every field recalculates as you type. No submit button, no waiting." },
+            { t: "Metric ↔ Imperial", d: "Flip units anywhere and every input and output converts with you." },
+            { t: "Built for site", d: "Waste, bags, trucks and pallets. Numbers you can actually order." },
+          ].map((p) => (
+            <div key={p.t} className="card p-7">
+              <h3 className="text-[19px] font-semibold tracking-tight">{p.t}</h3>
+              <p className="mt-2 text-[15px] leading-snug text-fg-2">{p.d}</p>
+            </div>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* FEATURED */}
+      <section className="mx-auto max-w-[1024px] px-5 pt-24">
+        <h2 className="display text-[36px] sm:text-[48px]">Start with the essentials.</h2>
+        <p className="mt-2 text-[19px] text-fg-2">The six calculators engineers open first.</p>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((slug) => { const c = CALCULATORS.find((x) => x.slug === slug)!; return <CalcCard key={slug} calc={c} big />; })}
+        </div>
+      </section>
+
+      {/* CATEGORIES */}
+      {CATEGORIES.map((cat, i) => (
+        <section key={cat.name} className={`mt-24 ${i % 2 === 0 ? "bg-bg-2" : ""} py-20`}>
+          <div className="mx-auto max-w-[1024px] px-5">
+            <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
+              <div>
+                <h2 className="display text-[32px] sm:text-[40px]">{cat.name}</h2>
+                <p className="mt-3 text-[17px] leading-snug text-fg-2">{cat.blurb}</p>
+                <Link href={`/calculators#${slugify(cat.name)}`} className="link-arrow mt-4 inline-block text-[15px] text-accent hover:underline">See all {cat.name.toLowerCase()}</Link>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {byCategory(cat.name).map((c) => <CalcCard key={c.slug} calc={c} />)}
+              </div>
+            </div>
+          </div>
+        </section>
+      ))}
+
+      {/* CTA */}
+      <section className="mx-auto max-w-[1024px] px-5 pt-24 text-center">
+        <h2 className="display text-[36px] sm:text-[56px]">Measure twice. Calculate once.</h2>
+        <p className="mx-auto mt-3 max-w-[520px] text-[19px] text-fg-2">Save results, share a link with the site team, or print a clean summary for the file.</p>
+        <Link href="/calculators" className="btn btn-primary mt-7">Browse all {CALCULATORS.length} calculators</Link>
+      </section>
+    </>
   );
 }
+
+function slugify(s: string) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }
