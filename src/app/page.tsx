@@ -23,7 +23,7 @@ export default function Home() {
           <p className="rise rise-2 mt-5 max-w-[560px] text-[19px] leading-snug text-fg-2 sm:text-[23px]">
             {CALCULATORS.length} engineering calculators. Metric or imperial. Instant, exact, and beautiful.
           </p>
-          <div className="rise rise-3 pointer-events-auto mt-7 flex items-center gap-3">
+          <div className="rise rise-3 pointer-events-auto mt-7 flex flex-col items-center gap-3 sm:flex-row">
             <Link href="/calculators" className="btn btn-primary">Open the calculators</Link>
             <Link href="/calculators/beam" className="btn btn-ghost link-arrow">Try the beam analyser</Link>
           </div>
